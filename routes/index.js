@@ -8,7 +8,7 @@ const connectionString = "postgres://postgres:@localhost/postgres";
 const client = new pg.Client(connectionString);
 client.connect();
 
-var storage = multer.memoryStorage()
+const storage = multer.memoryStorage()
 const upload = multer({
     storage: storage, 
     limits: {
@@ -36,11 +36,9 @@ router.get('/', function(req, res) {
 
 /* POST files */
 router.post('/files', upload.array('file', 10), (req, res, next) => {
-
-    var names = [];
-    var buffers = [];
+    const names = [];
+    const buffers = [];
     req.files.forEach((file, index) => {
-        console.log(file);
         names.push(file.originalname);
         buffers.push(file.buffer);
     });
@@ -56,7 +54,6 @@ router.post('/files', upload.array('file', 10), (req, res, next) => {
         });
     })
     .catch(e => {
-        console.error(e.stack)
         res.status(500).json({
             error:e.stack
         });
@@ -65,7 +62,7 @@ router.post('/files', upload.array('file', 10), (req, res, next) => {
 
 /* GET file by id */
 router.get('/files/:id', (req, res, next) =>{
-    var _id = req.params.id;
+    let _id = req.params.id;
     const query = {
         name: 'fetch-file',
         text: 'SELECT * FROM files WHERE id = $1',
@@ -73,14 +70,13 @@ router.get('/files/:id', (req, res, next) =>{
     }
     client.query(query)
     .then(result => {
-        var buffer = result.rows[0].file;
+        let buffer = result.rows[0].file;
         res.setHeader('Content-Disposition', 'attachment; filename='+result.rows[0].name);
         res.setHeader('Content-Transfer-Encoding', 'binary');
         res.setHeader('Content-Type', 'application/octet-stream');
         res.send(new Buffer(buffer, 'binary'));
     })
     .catch(e => {
-        console.error(e.stack)
         res.status(404).json({
             error:e.stack
         });

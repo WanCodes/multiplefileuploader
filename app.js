@@ -5,13 +5,7 @@ const hbs = require('express-handlebars');
 
 const app = express();
 
-var routes = require('./routes/index');
-
-app.use(bodyParser.urlencoded({
-    extended: true
-}));
-
-app.use(bodyParser.json());
+const routes = require('./routes/index');
 
 // view engine setup
 app.engine('hbs', hbs({extname: 'hbs', defaultLayout: 'index', layoutsDir: __dirname + '/views/'}));
